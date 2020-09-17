@@ -48,12 +48,17 @@ class MyApp extends StatelessWidget {
               children: [
                 //Top Section in the Upper Laywer
                 Container(
+                  padding: EdgeInsets.only(
+                    top: 50,
+                  ),
                   constraints: BoxConstraints(
                     minHeight: topSectionh,
                     minWidth: deviceSize.width,
                   ),
                   color: Colors.amberAccent,
                   child: Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    crossAxisAlignment: CrossAxisAlignment.center,
                     children: [
                       FlatButton(
                         onPressed: () {},
@@ -66,7 +71,7 @@ class MyApp extends StatelessWidget {
                         ),
                       ),
                       SizedBox(
-                        width: 10,
+                        width: 5,
                       ),
                       FlatButton(
                         onPressed: () {},
@@ -88,22 +93,74 @@ class MyApp extends StatelessWidget {
                     minWidth: deviceSize.width,
                   ),
                   child: Row(
+                    crossAxisAlignment: CrossAxisAlignment.end,
                     children: <Widget>[
                       //First element in the middle-upper-section
                       Container(
                         constraints: BoxConstraints(
-                          minHeight: middleSectionh,
+                          minHeight: middleSectionh / 6,
                           minWidth: firstMsectionw,
                         ),
-                        // color: Colors.redAccent,
+                        color: Colors.redAccent,
+                        child: Column(
+                          mainAxisSize: MainAxisSize.min,
+                          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                          crossAxisAlignment: CrossAxisAlignment.baseline,
+                          textBaseline: TextBaseline.alphabetic,
+                          children: [
+                            Text(
+                              '@hipswan',
+                              style: TextStyle(fontWeight: FontWeight.bold),
+                            ),
+                            Text('Video title'),
+                            Row(
+                              children: [
+                                Icon(
+                                  Icons.music_note,
+                                  size: 15.0,
+                                  color: Colors.white,
+                                ),
+                                Text(
+                                  'Artist detail',
+                                  style: TextStyle(
+                                    fontSize: 12.0,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ],
+                        ),
                       ),
                       //Second element in the middle-upper-section
-                      Container(
-                        constraints: BoxConstraints(
-                          minHeight: middleSectionh,
-                          minWidth: secondMsectionw,
+                      Expanded(
+                        child: Container(
+                          constraints: BoxConstraints(
+                            minHeight: middleSectionh / 2,
+                            // minWidth: secondMsectionw,
+                          ),
+                          color: Colors.blueGrey,
+                          child: Column(
+                            mainAxisSize: MainAxisSize.min,
+                            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                            children: [
+                              Icon(
+                                Icons.access_alarm_outlined,
+                              ),
+                              Icon(
+                                Icons.access_alarm_outlined,
+                              ),
+                              Icon(
+                                Icons.access_alarm_outlined,
+                              ),
+                              Icon(
+                                Icons.access_alarm_outlined,
+                              ),
+                              Icon(
+                                Icons.access_alarm_outlined,
+                              ),
+                            ],
+                          ),
                         ),
-                        color: Colors.blueGrey,
                       ),
                     ],
                   ),
