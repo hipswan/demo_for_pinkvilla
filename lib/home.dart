@@ -1,3 +1,4 @@
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 
@@ -35,22 +36,23 @@ class _HomeState extends State<Home> {
       child: Stack(
         children: <Widget>[
           //Lower pane in the stack for video
-          Container(
-            constraints: BoxConstraints(
-              minHeight: deviceSize.height,
-              minWidth: deviceSize.width,
-            ),
-            decoration: BoxDecoration(
-              color: Colors.lightGreenAccent,
+
+          //Middle pane in the stack : for
+          PageView(
+            dragStartBehavior: DragStartBehavior.start,
+            scrollDirection: Axis.vertical,
+            children: <Widget>[
+              VideoSlate(
+                color: Colors.blueAccent,
+              ),
+              VideoSlate(
+                color: Colors.lightBlue,
+              ),
+            ],
+            physics: ClampingScrollPhysics(
+              parent: AlwaysScrollableScrollPhysics(),
             ),
           ),
-          //Upper pane in the stack for details
-
-          //Top Section in the Upper Laywer
-
-          //Middle Section in the Upper Layer
-          VideoSlate(),
-          //Bottom Section in the Upper Layer
 
           Container(
             padding: EdgeInsets.only(

@@ -9,14 +9,15 @@ class VideoSlate extends StatefulWidget {
   int shareCount;
   String title;
   User user;
-  VideoSlate();
-  VideoSlate.details(
-      {this.videoUrl,
-      this.commentCount,
-      this.likeCount,
-      this.shareCount,
-      this.title,
-      this.user});
+  final dynamic color;
+  VideoSlate({this.color});
+  // VideoSlate.details(
+  //     {this.videoUrl,
+  //     this.commentCount,
+  //     this.likeCount,
+  //     this.shareCount,
+  //     this.title,
+  //     this.user});
 
   // factory VideoSlate.fromJson(Map<dynamic, dynamic> doc) {
   //   return VideoSlate(
@@ -38,6 +39,32 @@ class VideoSlate extends StatefulWidget {
 
 class _VideoSlateState extends State<VideoSlate> {
   @override
+  // TODO: implement mounted
+  bool get mounted => super.mounted;
+  @override
+  void deactivate() {
+    // TODO: implement deactivate
+    super.deactivate();
+    print('VideoSlate');
+    //play
+  }
+
+  @override
+  void didChangeDependencies() {
+    // TODO: implement didChangeDependencies
+    super.didChangeDependencies();
+    print('dependencies change');
+    //pause
+  }
+
+  @override
+  void didUpdateWidget(VideoSlate oldWidget) {
+    // TODO: implement didUpdateWidget
+    super.didUpdateWidget(oldWidget);
+    print('update widget');
+  }
+
+  @override
   Widget build(BuildContext context) {
     final Size deviceSize = MediaQuery.of(context).size;
     final double topSectionh = deviceSize.height / 8;
@@ -50,112 +77,105 @@ class _VideoSlateState extends State<VideoSlate> {
         deviceSize.height - (topSectionh + middleSectionh);
 
     // TODO: implement build
-    return GestureDetector(
-      onVerticalDragDown: (drag) {
-        print('drag down');
-        //pause
-      },
-      onVerticalDragStart: (drag) {
-        print('drag start');
-        //pause
-      },
-      onVerticalDragEnd: (drag) {
-        print('drag end');
-      },
-      onVerticalDragUpdate: (drag) {
-        print(drag);
-      },
-      onVerticalDragCancel: () {
-        print('drag cancel');
-        //play
-      },
-      child: Container(
-        constraints: BoxConstraints(
-          minHeight: deviceSize.height,
-          minWidth: deviceSize.width,
+    return Stack(
+      children: [
+        Container(
+          constraints: BoxConstraints(
+            minHeight: deviceSize.height,
+            minWidth: deviceSize.width,
+          ),
+          decoration: BoxDecoration(
+            color: widget.color,
+          ),
         ),
-        child: Column(
-          mainAxisSize: MainAxisSize.max,
-          mainAxisAlignment: MainAxisAlignment.end,
-          children: [
-            Container(
-              child: Row(
-                crossAxisAlignment: CrossAxisAlignment.end,
-                children: <Widget>[
-                  //First element in the middle-upper-section
-                  Container(
-                    constraints: BoxConstraints(
-                      minHeight: middleSectionh,
-                      minWidth: firstMsectionw,
-                    ),
-                    color: Colors.redAccent,
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.end,
-                      crossAxisAlignment: CrossAxisAlignment.baseline,
-                      textBaseline: TextBaseline.alphabetic,
-                      children: [
-                        Text(
-                          '@hipswan',
-                          style: TextStyle(
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                        Text('Video title'),
-                        Row(
-                          children: [
-                            Icon(
-                              Icons.music_note,
-                              size: 15.0,
-                              color: Colors.white,
-                            ),
-                            Text(
-                              'Artist detail',
-                              style: TextStyle(
-                                fontSize: 12.0,
-                              ),
-                            ),
-                          ],
-                        ),
-                      ],
-                    ),
-                  ),
-                  //Second element in the middle-upper-section
-                  Expanded(
-                    child: Container(
+        Container(
+          constraints: BoxConstraints(
+            minHeight: deviceSize.height,
+            minWidth: deviceSize.width,
+          ),
+          child: Column(
+            mainAxisSize: MainAxisSize.max,
+            mainAxisAlignment: MainAxisAlignment.end,
+            children: [
+              Container(
+                child: Row(
+                  crossAxisAlignment: CrossAxisAlignment.end,
+                  children: <Widget>[
+                    Container(
                       constraints: BoxConstraints(
-                        minHeight: middleSectionh / 2,
-                        // minWidth: secondMsectionw,
+                        minHeight: middleSectionh / 6,
+                        minWidth: firstMsectionw,
                       ),
-                      color: Colors.blueGrey,
+                      color: Colors.redAccent,
                       child: Column(
                         mainAxisSize: MainAxisSize.min,
                         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                        crossAxisAlignment: CrossAxisAlignment.baseline,
+                        textBaseline: TextBaseline.alphabetic,
                         children: [
-                          Icon(
-                            Icons.access_alarm_outlined,
+                          Text(
+                            '@hipswan',
+                            style: TextStyle(
+                              fontWeight: FontWeight.bold,
+                            ),
                           ),
-                          Icon(
-                            Icons.access_alarm_outlined,
-                          ),
-                          Icon(
-                            Icons.access_alarm_outlined,
-                          ),
-                          Icon(
-                            Icons.access_alarm_outlined,
-                          ),
-                          Icon(
-                            Icons.access_alarm_outlined,
+                          Text('Video title'),
+                          Row(
+                            children: [
+                              Icon(
+                                Icons.music_note,
+                                size: 15.0,
+                                color: Colors.white,
+                              ),
+                              Text(
+                                'Artist detail',
+                                style: TextStyle(
+                                  fontSize: 12.0,
+                                ),
+                              ),
+                            ],
                           ),
                         ],
                       ),
                     ),
-                  ),
-                ],
+                    //Second element in the middle-upper-section
+                    Expanded(
+                      child: Container(
+                        constraints: BoxConstraints(
+                          minHeight: middleSectionh / 2,
+                          // minWidth: secondMsectionw,
+                        ),
+                        color: Colors.blueGrey,
+                        child: Column(
+                          mainAxisSize: MainAxisSize.min,
+                          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                          children: [
+                            Icon(
+                              Icons.access_alarm_outlined,
+                            ),
+                            Icon(
+                              Icons.access_alarm_outlined,
+                            ),
+                            Icon(
+                              Icons.access_alarm_outlined,
+                            ),
+                            Icon(
+                              Icons.access_alarm_outlined,
+                            ),
+                            Icon(
+                              Icons.access_alarm_outlined,
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
               ),
-            ),
-          ],
+            ],
+          ),
         ),
-      ),
+      ],
     );
   }
 }
