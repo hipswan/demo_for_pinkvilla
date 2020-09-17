@@ -1,5 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'dart:math';
 
 void main() {
   runApp(
@@ -15,10 +16,19 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final Size deviceSize = MediaQuery.of(context).size;
+    final double topSectionh = deviceSize.height / 8;
+    final double middleSectionh = deviceSize.height / 1.25;
+    final double firstMsectionw = deviceSize.width / 1.3;
+
+    final double secondMsectionw = deviceSize.width - firstMsectionw;
+
+    final double bottomSectionh =
+        deviceSize.height - (topSectionh + middleSectionh);
 
     return Scaffold(
       body: Stack(
         children: <Widget>[
+          //Lower pane in the stack for video
           Container(
             constraints: BoxConstraints(
               minHeight: deviceSize.height,
@@ -28,6 +38,7 @@ class MyApp extends StatelessWidget {
               color: Colors.lightGreenAccent,
             ),
           ),
+          //Upper pane in the stack for details
           Container(
             constraints: BoxConstraints(
               minHeight: deviceSize.height,
@@ -35,9 +46,10 @@ class MyApp extends StatelessWidget {
             ),
             child: Column(
               children: [
+                //Top Section in the Upper Laywer
                 Container(
                   constraints: BoxConstraints(
-                    minHeight: deviceSize.height / 10,
+                    minHeight: topSectionh,
                     minWidth: deviceSize.width,
                   ),
                   color: Colors.amberAccent,
@@ -69,47 +81,53 @@ class MyApp extends StatelessWidget {
                     ],
                   ),
                 ),
+                //Middle Section in the Upper Layer
                 Container(
                   constraints: BoxConstraints(
-                    minHeight: deviceSize.height / 1.25,
+                    minHeight: middleSectionh,
                     minWidth: deviceSize.width,
                   ),
                   child: Row(
                     children: <Widget>[
+                      //First element in the middle-upper-section
                       Container(
                         constraints: BoxConstraints(
-                          minHeight: deviceSize.height / 1.25,
-                          minWidth: deviceSize.width / 1.5,
+                          minHeight: middleSectionh,
+                          minWidth: firstMsectionw,
                         ),
-                        color: Colors.redAccent,
+                        // color: Colors.redAccent,
                       ),
+                      //Second element in the middle-upper-section
                       Container(
                         constraints: BoxConstraints(
-                          minHeight: deviceSize.height / 1.25,
-                          minWidth: deviceSize.width / 3,
+                          minHeight: middleSectionh,
+                          minWidth: secondMsectionw,
                         ),
                         color: Colors.blueGrey,
                       ),
                     ],
                   ),
                 ),
-                Container(
-                  constraints: BoxConstraints(
-                    minHeight: deviceSize.height / 10,
-                    minWidth: deviceSize.width,
-                  ),
-                  decoration: BoxDecoration(
-                    color: Colors.pinkAccent,
-                  ),
-                  child: CupertinoTabBar(
-                    items: [
-                      BottomNavigationBarItem(
-                        icon: Icon(Icons.menu_book_outlined),
-                      ),
-                      BottomNavigationBarItem(
-                        icon: Icon(Icons.menu_book_outlined),
-                      ),
-                    ],
+                //Bottom Section in the Upper Layer
+                Expanded(
+                  child: Container(
+                    // constraints: BoxConstraints(
+                    //   minHeight: bottomSectionh,
+                    //   minWidth: deviceSize.width,
+                    // ),
+                    decoration: BoxDecoration(),
+                    child: CupertinoTabBar(
+                      items: [
+                        BottomNavigationBarItem(
+                          backgroundColor: Colors.pink,
+                          icon: Icon(Icons.menu_book_outlined),
+                        ),
+                        BottomNavigationBarItem(
+                          backgroundColor: Colors.pink,
+                          icon: Icon(Icons.menu_book_outlined),
+                        ),
+                      ],
+                    ),
                   ),
                 ),
               ],
