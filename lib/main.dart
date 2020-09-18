@@ -4,9 +4,7 @@ import 'home.dart';
 
 void main() {
   runApp(
-    MaterialApp(
-      home: MyApp(),
-    ),
+    MyApp(),
   );
 }
 
@@ -15,25 +13,26 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: Home(),
-      // bottomNavigationBar: Container(
-      //   // constraints: BoxConstraints(
-      //   //   minHeight: bottomSectionh,
-      //   //   minWidth: deviceSize.width,
-      //   // ),
-      //   decoration: BoxDecoration(),
-      //   child: CupertinoTabBar(
-      //     items: [
-      //       BottomNavigationBarItem(
-      //         icon: Icon(Icons.menu),
-      //       ),
-      //       BottomNavigationBarItem(
-      //         icon: Icon(Icons.menu),
-      //       ),
-      //     ],
-      //   ),
-      // ),
+    return MaterialApp(
+      theme: ThemeData(
+        // Uncomment in phase 3 to apply white to text
+        textTheme: Theme.of(context)
+            .textTheme
+            .apply(bodyColor: Colors.white, displayColor: Colors.white),
+      ),
+      home: Scaffold(
+        body: Home(),
+        bottomNavigationBar: CupertinoTabBar(
+          items: [
+            BottomNavigationBarItem(
+              icon: Icon(Icons.menu),
+            ),
+            BottomNavigationBarItem(
+              icon: Icon(Icons.menu),
+            ),
+          ],
+        ),
+      ),
     );
   }
 }

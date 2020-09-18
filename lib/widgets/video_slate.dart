@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:video_player/video_player.dart';
-import 'user_detail.dart';
+import '../model/user_detail.dart';
 
 class VideoSlate extends StatefulWidget {
   final String videoUrl;
@@ -51,7 +51,9 @@ class _VideoSlateState extends State<VideoSlate> {
       ..initialize().then(
         (_) {
           // Ensure the first frame is shown after the video is initialized, even before the play button has been pressed.
-          setState(() {});
+          setState(() {
+            _controller.play();
+          });
         },
       );
     // _controller.addListener(() {
@@ -67,7 +69,7 @@ class _VideoSlateState extends State<VideoSlate> {
   void deactivate() {
     // TODO: implement deactivate
     super.deactivate();
-    print('deactivate');
+    print('deactivate ${_VideoSlateState().mounted} ${widget.user.name}');
     // setState(() {
     //   (_VideoSlateState().mounted && !_controller.value.isPlaying)
     //       ? _controller.play()
@@ -79,24 +81,100 @@ class _VideoSlateState extends State<VideoSlate> {
   void didChangeDependencies() {
     // TODO: implement didChangeDependencies
     super.didChangeDependencies();
-    print('dependencies change');
+    print('dependencies change  ${this.mounted} ${widget.user.name}');
     //pause
-    // setState(() {
-    //   _controller.value.isPlaying ? _controller.pause() : null;
-    // });
   }
 
   @override
   void didUpdateWidget(VideoSlate oldWidget) {
     // TODO: implement didUpdateWidget
     super.didUpdateWidget(oldWidget);
-    print('update widget');
+    print('update widget ${widget.user.name}');
   }
 
   @override
   void dispose() {
     super.dispose();
+    print('dispose ${widget.user.name}');
+    _controller.pause();
     _controller.dispose();
+  }
+
+  buildActionButton(var height, var width) {
+    return Container(
+      constraints: BoxConstraints(
+        minHeight: height / 1.5,
+        // minWidth: secondMsectionw,
+      ),
+      // color: Colors.blueGrey,
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+        children: [
+          Icon(
+            Icons.share,
+          ),
+          Icon(
+            Icons.share,
+          ),
+          Icon(
+            Icons.share,
+          ),
+          Icon(
+            Icons.share,
+          ),
+          Icon(
+            Icons.share,
+          ),
+        ],
+      ),
+    );
+  }
+
+  buildMetaData(var width) {
+    return Container(
+      constraints: BoxConstraints(
+        maxWidth: width,
+      ),
+      padding: EdgeInsets.only(left: 20.0),
+      child: Column(
+        mainAxisSize: MainAxisSize.max,
+        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+        crossAxisAlignment: CrossAxisAlignment.baseline,
+        textBaseline: TextBaseline.alphabetic,
+        children: [
+          Text(
+            '@${widget.user.name}' ?? 'No Data',
+            style: TextStyle(fontWeight: FontWeight.bold),
+          ),
+          Container(
+            height: 10.0,
+          ),
+          Text(
+            widget.title ?? '',
+            softWrap: true,
+            textDirection: TextDirection.ltr,
+          ),
+          Container(
+            height: 10.0,
+          ),
+          Row(children: [
+            Icon(Icons.music_note, color: Colors.white, size: 15.0),
+            Container(
+              width: 10.0,
+            ),
+            Text('Artist name', style: TextStyle(fontSize: 12.0)),
+            Container(
+              width: 10.0,
+            ),
+            Text('Song name', style: TextStyle(fontSize: 12.0))
+          ]),
+          Container(
+            height: 12.0,
+          ),
+        ],
+      ),
+    );
   }
 
   @override
@@ -135,14 +213,18 @@ class _VideoSlateState extends State<VideoSlate> {
               minWidth: deviceSize.width,
             ),
             decoration: BoxDecoration(
-              color: Colors.amber,
-            ),
+                // color: Colors.amber,
+                ),
             child: _controller.value.initialized
                 ? AspectRatio(
                     aspectRatio: _controller.value.aspectRatio,
                     child: VideoPlayer(_controller),
                   )
-                : Container(),
+                : Container(
+                    child: Center(
+                      child: CircularProgressIndicator(),
+                    ),
+                  ),
           ),
           Container(
             constraints: BoxConstraints(
@@ -163,71 +245,12 @@ class _VideoSlateState extends State<VideoSlate> {
                           minWidth: firstMsectionw,
                         ),
                         // color: Colors.redAccent,
-                        child: Column(
-                          mainAxisSize: MainAxisSize.min,
-                          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                          crossAxisAlignment: CrossAxisAlignment.baseline,
-                          textBaseline: TextBaseline.alphabetic,
-                          children: [
-                            Text(
-                              widget.user.name ?? '',
-                              style: TextStyle(
-                                fontWeight: FontWeight.bold,
-                              ),
-                            ),
-                            Text(
-                              widget.title.trim() ?? '',
-                              softWrap: true,
-                              overflow: TextOverflow.fade,
-                            ),
-                            Row(
-                              children: [
-                                Icon(
-                                  Icons.music_note,
-                                  size: 15.0,
-                                  color: Colors.white,
-                                ),
-                                Text(
-                                  '${widget.commentCount}' ?? '',
-                                  style: TextStyle(
-                                    fontSize: 12.0,
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ],
-                        ),
+                        child: buildMetaData(firstMsectionw),
                       ),
                       //Second element in the middle-upper-section
                       Expanded(
-                        child: Container(
-                          constraints: BoxConstraints(
-                            minHeight: middleSectionh / 2,
-                            // minWidth: secondMsectionw,
-                          ),
-                          // color: Colors.blueGrey,
-                          child: Column(
-                            mainAxisSize: MainAxisSize.min,
-                            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                            children: [
-                              Icon(
-                                Icons.share,
-                              ),
-                              Icon(
-                                Icons.share,
-                              ),
-                              Icon(
-                                Icons.share,
-                              ),
-                              Icon(
-                                Icons.share,
-                              ),
-                              Icon(
-                                Icons.share,
-                              ),
-                            ],
-                          ),
-                        ),
+                        child:
+                            buildActionButton(middleSectionh, secondMsectionw),
                       ),
                     ],
                   ),
