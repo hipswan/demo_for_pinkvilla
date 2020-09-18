@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:video_player/video_player.dart';
 import '../model/user_detail.dart';
+import '../tik_tok_icons_icons.dart';
 
 class VideoSlate extends StatefulWidget {
   final String videoUrl;
@@ -100,6 +101,27 @@ class _VideoSlateState extends State<VideoSlate> {
     _controller.dispose();
   }
 
+  getActionButton({IconData icon, String count, double width, double height}) {
+    return Container(
+        margin: EdgeInsets.only(top: 5.0),
+        width: width / 1.2,
+        height: width / 1.2,
+        child: Column(children: [
+          Icon(icon, size: width / 2, color: Colors.grey[300]),
+          Padding(
+            padding: EdgeInsets.only(
+              top: 5.0,
+            ),
+            child: Text(
+              count,
+              style: TextStyle(
+                fontSize: 10.0,
+              ),
+            ),
+          )
+        ]));
+  }
+
   buildActionButton(var height, var width) {
     return Container(
       constraints: BoxConstraints(
@@ -108,24 +130,24 @@ class _VideoSlateState extends State<VideoSlate> {
       ),
       // color: Colors.blueGrey,
       child: Column(
-        mainAxisSize: MainAxisSize.min,
+        mainAxisSize: MainAxisSize.max,
         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
         children: [
-          Icon(
-            Icons.share,
-          ),
-          Icon(
-            Icons.share,
-          ),
-          Icon(
-            Icons.share,
-          ),
-          Icon(
-            Icons.share,
-          ),
-          Icon(
-            Icons.share,
-          ),
+          // getHeadshot(),
+
+          getActionButton(
+              icon: TikTokIcons.heart,
+              count: '${widget.likeCount}',
+              width: width),
+          getActionButton(
+              icon: TikTokIcons.reply,
+              count: '${widget.commentCount}',
+              width: width),
+          getActionButton(
+              icon: TikTokIcons.chat_bubble,
+              count: '${widget.shareCount}',
+              width: width),
+          // getMusicDisc()
         ],
       ),
     );
@@ -194,7 +216,7 @@ class _VideoSlateState extends State<VideoSlate> {
       onTapDown: (tap) {
         print('tap down');
         setState(() {
-          _controller.value.isPlaying ? _controller.pause() : null;
+          // _controller.value.isPlaying ? _controller.pause() : null;
         });
       },
       onTap: () {

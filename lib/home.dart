@@ -2,7 +2,7 @@ import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:http/http.dart' as http;
-import 'model/video_slate.dart';
+import 'widgets/video_slate.dart';
 import 'dart:convert';
 
 class Home extends StatefulWidget {
