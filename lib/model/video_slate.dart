@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'dart:math';
+import 'package:video_player/video_player.dart';
 import 'user_detail.dart';
 
 class VideoSlate extends StatefulWidget {
@@ -38,15 +38,41 @@ class VideoSlate extends StatefulWidget {
 }
 
 class _VideoSlateState extends State<VideoSlate> {
+  VideoPlayerController _controller;
+
+  @override
+  void initState() {
+    super.initState();
+    print(widget.videoUrl);
+    _controller = VideoPlayerController.network(
+      widget.videoUrl,
+    )
+      ..setLooping(true)
+      ..initialize().then(
+        (_) {
+          // Ensure the first frame is shown after the video is initialized, even before the play button has been pressed.
+          setState(() {});
+        },
+      );
+    // _controller.addListener(() {
+    //   print('closure');
+    // });
+  }
+
   @override
   // TODO: implement mounted
   bool get mounted => super.mounted;
+
   @override
   void deactivate() {
     // TODO: implement deactivate
     super.deactivate();
-    print('VideoSlate');
-    //play
+    print('deactivate');
+    // setState(() {
+    //   (_VideoSlateState().mounted && !_controller.value.isPlaying)
+    //       ? _controller.play()
+    //       : null;
+    // });
   }
 
   @override
@@ -55,6 +81,9 @@ class _VideoSlateState extends State<VideoSlate> {
     super.didChangeDependencies();
     print('dependencies change');
     //pause
+    // setState(() {
+    //   _controller.value.isPlaying ? _controller.pause() : null;
+    // });
   }
 
   @override
@@ -62,6 +91,12 @@ class _VideoSlateState extends State<VideoSlate> {
     // TODO: implement didUpdateWidget
     super.didUpdateWidget(oldWidget);
     print('update widget');
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+    _controller.dispose();
   }
 
   @override
@@ -77,107 +112,131 @@ class _VideoSlateState extends State<VideoSlate> {
         deviceSize.height - (topSectionh + middleSectionh);
 
     // TODO: implement build
-    return Stack(
-      children: [
-        Container(
-          constraints: BoxConstraints(
-            minHeight: deviceSize.height,
-            minWidth: deviceSize.width,
+    return GestureDetector(
+      onTapDown: (tap) {
+        print('tap down');
+        setState(() {
+          _controller.value.isPlaying ? _controller.pause() : null;
+        });
+      },
+      onTap: () {
+        print('tap ');
+        setState(() {
+          _controller.value.isPlaying
+              ? _controller.pause()
+              : _controller.play();
+        });
+      },
+      child: Stack(
+        children: [
+          Container(
+            constraints: BoxConstraints(
+              minHeight: deviceSize.height,
+              minWidth: deviceSize.width,
+            ),
+            decoration: BoxDecoration(
+              color: Colors.amber,
+            ),
+            child: _controller.value.initialized
+                ? AspectRatio(
+                    aspectRatio: _controller.value.aspectRatio,
+                    child: VideoPlayer(_controller),
+                  )
+                : Container(),
           ),
-          decoration: BoxDecoration(
-            color: Colors.amber,
-          ),
-        ),
-        Container(
-          constraints: BoxConstraints(
-            minHeight: deviceSize.height,
-            minWidth: deviceSize.width,
-          ),
-          child: Column(
-            mainAxisSize: MainAxisSize.max,
-            mainAxisAlignment: MainAxisAlignment.end,
-            children: [
-              Container(
-                child: Row(
-                  crossAxisAlignment: CrossAxisAlignment.end,
-                  children: <Widget>[
-                    Container(
-                      constraints: BoxConstraints(
-                        minHeight: middleSectionh / 6,
-                        minWidth: firstMsectionw,
-                      ),
-                      color: Colors.redAccent,
-                      child: Column(
-                        mainAxisSize: MainAxisSize.min,
-                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                        crossAxisAlignment: CrossAxisAlignment.baseline,
-                        textBaseline: TextBaseline.alphabetic,
-                        children: [
-                          Text(
-                            widget.user.name ?? '',
-                            style: TextStyle(
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
-                          Text(
-                            widget.title ?? '',
-                          ),
-                          Row(
-                            children: [
-                              Icon(
-                                Icons.music_note,
-                                size: 15.0,
-                                color: Colors.white,
-                              ),
-                              Text(
-                                '${widget.commentCount}' ?? '',
-                                style: TextStyle(
-                                  fontSize: 12.0,
-                                ),
-                              ),
-                            ],
-                          ),
-                        ],
-                      ),
-                    ),
-                    //Second element in the middle-upper-section
-                    Expanded(
-                      child: Container(
+          Container(
+            constraints: BoxConstraints(
+              minHeight: deviceSize.height,
+              minWidth: deviceSize.width,
+            ),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              mainAxisAlignment: MainAxisAlignment.end,
+              children: [
+                Container(
+                  child: Row(
+                    crossAxisAlignment: CrossAxisAlignment.end,
+                    children: <Widget>[
+                      Container(
                         constraints: BoxConstraints(
-                          minHeight: middleSectionh / 2,
-                          // minWidth: secondMsectionw,
+                          minHeight: middleSectionh / 6,
+                          minWidth: firstMsectionw,
                         ),
-                        color: Colors.blueGrey,
+                        // color: Colors.redAccent,
                         child: Column(
                           mainAxisSize: MainAxisSize.min,
                           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                          crossAxisAlignment: CrossAxisAlignment.baseline,
+                          textBaseline: TextBaseline.alphabetic,
                           children: [
-                            Icon(
-                              Icons.access_alarm_outlined,
+                            Text(
+                              widget.user.name ?? '',
+                              style: TextStyle(
+                                fontWeight: FontWeight.bold,
+                              ),
                             ),
-                            Icon(
-                              Icons.access_alarm_outlined,
+                            Text(
+                              widget.title.trim() ?? '',
+                              softWrap: true,
+                              overflow: TextOverflow.fade,
                             ),
-                            Icon(
-                              Icons.access_alarm_outlined,
-                            ),
-                            Icon(
-                              Icons.access_alarm_outlined,
-                            ),
-                            Icon(
-                              Icons.access_alarm_outlined,
+                            Row(
+                              children: [
+                                Icon(
+                                  Icons.music_note,
+                                  size: 15.0,
+                                  color: Colors.white,
+                                ),
+                                Text(
+                                  '${widget.commentCount}' ?? '',
+                                  style: TextStyle(
+                                    fontSize: 12.0,
+                                  ),
+                                ),
+                              ],
                             ),
                           ],
                         ),
                       ),
-                    ),
-                  ],
+                      //Second element in the middle-upper-section
+                      Expanded(
+                        child: Container(
+                          constraints: BoxConstraints(
+                            minHeight: middleSectionh / 2,
+                            // minWidth: secondMsectionw,
+                          ),
+                          // color: Colors.blueGrey,
+                          child: Column(
+                            mainAxisSize: MainAxisSize.min,
+                            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                            children: [
+                              Icon(
+                                Icons.share,
+                              ),
+                              Icon(
+                                Icons.share,
+                              ),
+                              Icon(
+                                Icons.share,
+                              ),
+                              Icon(
+                                Icons.share,
+                              ),
+                              Icon(
+                                Icons.share,
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
                 ),
-              ),
-            ],
+              ],
+            ),
           ),
-        ),
-      ],
+        ],
+      ),
     );
   }
 }

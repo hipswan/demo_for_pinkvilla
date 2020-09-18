@@ -1,6 +1,5 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'dart:math';
 import 'home.dart';
 
 void main() {
@@ -18,25 +17,23 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       body: Home(),
-      bottomNavigationBar: Container(
-        // constraints: BoxConstraints(
-        //   minHeight: bottomSectionh,
-        //   minWidth: deviceSize.width,
-        // ),
-        decoration: BoxDecoration(),
-        child: CupertinoTabBar(
-          items: [
-            BottomNavigationBarItem(
-              backgroundColor: Colors.pink,
-              icon: Icon(Icons.menu_book_outlined),
-            ),
-            BottomNavigationBarItem(
-              backgroundColor: Colors.pink,
-              icon: Icon(Icons.menu_book_outlined),
-            ),
-          ],
-        ),
-      ),
+      // bottomNavigationBar: Container(
+      //   // constraints: BoxConstraints(
+      //   //   minHeight: bottomSectionh,
+      //   //   minWidth: deviceSize.width,
+      //   // ),
+      //   decoration: BoxDecoration(),
+      //   child: CupertinoTabBar(
+      //     items: [
+      //       BottomNavigationBarItem(
+      //         icon: Icon(Icons.menu),
+      //       ),
+      //       BottomNavigationBarItem(
+      //         icon: Icon(Icons.menu),
+      //       ),
+      //     ],
+      //   ),
+      // ),
     );
   }
 }

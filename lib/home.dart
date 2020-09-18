@@ -77,7 +77,7 @@ class _HomeState extends State<Home> {
               minHeight: topSectionh,
               minWidth: deviceSize.width,
             ),
-            color: Colors.amberAccent,
+            // color: Colors.amberAccent,
             child: Row(
               mainAxisAlignment: MainAxisAlignment.center,
               crossAxisAlignment: CrossAxisAlignment.center,
