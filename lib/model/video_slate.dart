@@ -1,37 +1,37 @@
 import 'package:flutter/material.dart';
-
+import 'dart:math';
 import 'user_detail.dart';
 
 class VideoSlate extends StatefulWidget {
-  String videoUrl;
-  int commentCount;
-  int likeCount;
-  int shareCount;
-  String title;
-  User user;
-  final dynamic color;
-  VideoSlate({this.color});
-  // VideoSlate.details(
-  //     {this.videoUrl,
-  //     this.commentCount,
-  //     this.likeCount,
-  //     this.shareCount,
-  //     this.title,
-  //     this.user});
+  final String videoUrl;
+  final int commentCount;
+  final int likeCount;
+  final int shareCount;
+  final String title;
+  final User user;
+  // final dynamic color;
+  // VideoSlate({this.color});
+  VideoSlate.details(
+      {this.videoUrl,
+      this.commentCount,
+      this.likeCount,
+      this.shareCount,
+      this.title,
+      this.user});
 
-  // factory VideoSlate.fromJson(Map<dynamic, dynamic> doc) {
-  //   return VideoSlate(
-  //     videoUrl: doc['url'],
-  //     commentCount: doc['comment-count'],
-  //     likeCount: doc['like-count  '],
-  //     shareCount: doc['share-count'],
-  //     title: doc['title'],
-  //     user: User(
-  //       headshot: doc['user']['headshot'],
-  //       name: doc['user']['name'],
-  //     ),
-  //   );
-  //}
+  factory VideoSlate.fromJson(doc) {
+    return VideoSlate.details(
+      videoUrl: doc['url'],
+      commentCount: doc['comment-count'],
+      likeCount: doc['like-count '],
+      shareCount: doc['share-count'],
+      title: doc['title'],
+      user: User(
+        headshot: doc['user']['headshot'],
+        name: doc['user']['name'],
+      ),
+    );
+  }
 
   @override
   _VideoSlateState createState() => _VideoSlateState();
@@ -85,7 +85,7 @@ class _VideoSlateState extends State<VideoSlate> {
             minWidth: deviceSize.width,
           ),
           decoration: BoxDecoration(
-            color: widget.color,
+            color: Colors.amber,
           ),
         ),
         Container(
@@ -114,12 +114,14 @@ class _VideoSlateState extends State<VideoSlate> {
                         textBaseline: TextBaseline.alphabetic,
                         children: [
                           Text(
-                            '@hipswan',
+                            widget.user.name ?? '',
                             style: TextStyle(
                               fontWeight: FontWeight.bold,
                             ),
                           ),
-                          Text('Video title'),
+                          Text(
+                            widget.title ?? '',
+                          ),
                           Row(
                             children: [
                               Icon(
@@ -128,7 +130,7 @@ class _VideoSlateState extends State<VideoSlate> {
                                 color: Colors.white,
                               ),
                               Text(
-                                'Artist detail',
+                                '${widget.commentCount}' ?? '',
                                 style: TextStyle(
                                   fontSize: 12.0,
                                 ),

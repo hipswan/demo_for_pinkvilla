@@ -1,8 +1,9 @@
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
-
+import 'package:http/http.dart' as http;
 import 'model/video_slate.dart';
+import 'dart:convert';
 
 class Home extends StatefulWidget {
   Home({Key key}) : super(key: key);
@@ -18,6 +19,35 @@ class _HomeState extends State<Home> {
   void initState() {
     // TODO: implement initState
     super.initState();
+    print('Intro');
+  }
+
+  Widget buildVideoSlate() {
+    return FutureBuilder<http.Response>(
+      future:
+          http.get('https://www.pinkvilla.com/feed/video-test/video-feed.json'),
+      builder: (context, snapshot) {
+        if (!snapshot.hasData) {
+          return CircularProgressIndicator();
+        }
+        List<dynamic> jsonData = jsonDecode(snapshot.data.body);
+        print(snapshot.data);
+
+        videoSlateList = jsonData
+            .map(
+              (e) => VideoSlate.fromJson(e),
+            )
+            .toList();
+
+        return PageView(
+          scrollDirection: Axis.vertical,
+          children: videoSlateList,
+          physics: ClampingScrollPhysics(
+            parent: AlwaysScrollableScrollPhysics(),
+          ),
+        );
+      },
+    );
   }
 
   @override
@@ -36,23 +66,8 @@ class _HomeState extends State<Home> {
       child: Stack(
         children: <Widget>[
           //Lower pane in the stack for video
-
+          buildVideoSlate(),
           //Middle pane in the stack : for
-          PageView(
-            dragStartBehavior: DragStartBehavior.start,
-            scrollDirection: Axis.vertical,
-            children: <Widget>[
-              VideoSlate(
-                color: Colors.blueAccent,
-              ),
-              VideoSlate(
-                color: Colors.lightBlue,
-              ),
-            ],
-            physics: ClampingScrollPhysics(
-              parent: AlwaysScrollableScrollPhysics(),
-            ),
-          ),
 
           Container(
             padding: EdgeInsets.only(
