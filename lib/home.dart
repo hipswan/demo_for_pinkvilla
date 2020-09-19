@@ -53,8 +53,8 @@ class _HomeState extends State<Home> {
 
   buildCentreIcon() {
     return Container(
-      width: 45.0,
-      height: 27.0,
+      width: 50.0,
+      height: 30.0,
       child: Stack(
         children: [
           Container(
@@ -72,7 +72,7 @@ class _HomeState extends State<Home> {
           Center(
             child: Container(
               height: double.infinity,
-              width: 35,
+              width: 40,
               decoration: BoxDecoration(
                   color: Colors.white,
                   borderRadius: BorderRadius.circular(7.0)),
@@ -102,10 +102,7 @@ class _HomeState extends State<Home> {
     return Container(
       child: Stack(
         children: <Widget>[
-          //Lower pane in the stack for video
           buildVideoSlate(),
-          //Middle pane in the stack : for
-
           Container(
             child: Column(
               children: [
@@ -115,7 +112,6 @@ class _HomeState extends State<Home> {
                   ),
                   width: deviceSize.width,
                   height: topSectionh,
-                  // color: Colors.amberAccent,
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     crossAxisAlignment: CrossAxisAlignment.center,
@@ -126,21 +122,31 @@ class _HomeState extends State<Home> {
                           'Following',
                           style: TextStyle(
                             color: Colors.white,
+                            fontSize: 15.0,
                             fontWeight: FontWeight.normal,
                           ),
                         ),
                       ),
                       SizedBox(
                         width: 5,
+                        child: Center(
+                          child: Text(
+                            '|',
+                            style: TextStyle(
+                              color: Colors.white,
+                              fontSize: 20.0,
+                            ),
+                          ),
+                        ),
                       ),
                       FlatButton(
                         onPressed: () {},
                         child: Text(
-                          'For You',
+                          'For you',
                           style: TextStyle(
-                            color: Colors.white,
-                            fontWeight: FontWeight.bold,
-                          ),
+                              color: Colors.white,
+                              fontSize: 17.0,
+                              fontWeight: FontWeight.bold),
                         ),
                       ),
                     ],
@@ -152,6 +158,20 @@ class _HomeState extends State<Home> {
                       alignment: Alignment.bottomCenter,
                       child: Container(
                         height: 50.0,
+                        decoration: BoxDecoration(
+                          // borderRadius: BorderRadius.vertical(
+                          //   top: Radius.circular(
+                          //     10,
+                          //   ),
+                          // ),
+                          border: Border(
+                            top: BorderSide(
+                              color: Colors.white,
+                              width: 1.5,
+                              style: BorderStyle.solid,
+                            ),
+                          ),
+                        ),
                         child: Row(
                           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                           children: [

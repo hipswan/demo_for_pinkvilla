@@ -26,7 +26,7 @@ class VideoSlate extends StatefulWidget {
     return VideoSlate.details(
       videoUrl: doc['url'],
       commentCount: doc['comment-count'],
-      likeCount: doc['like-count '],
+      likeCount: doc['like-count'],
       shareCount: doc['share-count'],
       title: doc['title'],
       user: User(
@@ -45,11 +45,14 @@ class _VideoSlateState extends State<VideoSlate>
   VideoPlayerController _controller;
   AnimationController rotationController;
 
+  get bottomTabBarHeight => 50.0;
+
   @override
   void initState() {
     super.initState();
+    print('likecount ${widget.likeCount}');
     rotationController = AnimationController(
-        duration: const Duration(milliseconds: 1000), vsync: this);
+        duration: const Duration(milliseconds: 2000), vsync: this);
     rotationController.forward();
     rotationController.addListener(() {
       setState(() {
@@ -95,15 +98,14 @@ class _VideoSlateState extends State<VideoSlate>
   void didChangeDependencies() {
     // TODO: implement didChangeDependencies
     super.didChangeDependencies();
-    print('dependencies change  ${this.mounted} ${widget.user.name}');
-    //pause
+    // print('dependencies change  ${this.mounted} ${widget.user.name}');
   }
 
   @override
   void didUpdateWidget(VideoSlate oldWidget) {
     // TODO: implement didUpdateWidget
     super.didUpdateWidget(oldWidget);
-    print('update widget ${widget.user.name}');
+    // print('update widget ${widget.user.name}');
   }
 
   @override
@@ -112,34 +114,44 @@ class _VideoSlateState extends State<VideoSlate>
     _controller.dispose();
     rotationController.dispose();
     super.dispose();
-    print('dispose ${widget.user.name}');
+    // print('dispose ${widget.user.name}');
   }
 
   getActionButton({IconData icon, String count, double width, double height}) {
+    var actionButtomWidth = width / 1.2;
+    var actionIconSize = width / 2.5;
     return Container(
-      margin: EdgeInsets.only(
-        top: 5.0,
-        bottom: 5.0,
-      ),
-      width: width / 1.3,
-      height: width / 1.3,
+      // margin: EdgeInsets.only(
+      //   top: 5.0,
+      //   bottom: 5.0,
+      // ),
+      width: actionButtomWidth,
+      height: actionButtomWidth,
       child: Column(
         mainAxisSize: MainAxisSize.max,
         mainAxisAlignment: MainAxisAlignment.center,
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
-          Icon(
-            icon,
-            size: width / 2.2,
-            color: Colors.grey[300],
+          Container(
+            child: Center(
+              child: Icon(
+                icon,
+                size: actionIconSize,
+                color: Colors.grey[200],
+              ),
+            ),
           ),
-          SizedBox(
-            height: 7.0,
-          ),
-          Text(
-            count,
-            style: TextStyle(
-              fontSize: 12.0,
+          Expanded(
+            child: Container(
+              width: width,
+              padding: EdgeInsets.all(10.0),
+              child: Text(
+                count,
+                style: TextStyle(
+                  fontSize: 12.0,
+                ),
+                textAlign: TextAlign.center,
+              ),
             ),
           ),
         ],
@@ -149,71 +161,87 @@ class _VideoSlateState extends State<VideoSlate>
 
   getHeadshot({double width, String imageUrl}) {
     double boxWidth = width / 1.2;
-    double imageWidth = width / 1.4;
+    double imageWidth = width / 1.5;
 
-    return Stack(children: [
-      Container(
-        // margin: EdgeInsets.only(top: 10.0),
-        width: boxWidth,
-        height: boxWidth,
-        child: Container(
-          padding: EdgeInsets.all(1.0),
-          decoration: BoxDecoration(
-            color: Colors.transparent,
-            border: Border.all(
-              color: Colors.pinkAccent,
-              width: 3,
-              style: BorderStyle.solid,
+    double headShotBorderWidth = 3;
+    return Container(
+      width: width,
+      height: width,
+      child: Stack(children: [
+        Center(
+          child: Container(
+            width: boxWidth,
+            height: boxWidth,
+            child: Container(
+              padding: EdgeInsets.all(1.0),
+              decoration: BoxDecoration(
+                color: Colors.transparent,
+                border: Border.all(
+                  color: Colors.pinkAccent.withOpacity(0.8),
+                  width: headShotBorderWidth,
+                  style: BorderStyle.solid,
+                ),
+                borderRadius: BorderRadius.circular(boxWidth / 2),
+              ),
             ),
-            borderRadius: BorderRadius.circular(boxWidth / 2),
           ),
         ),
-      ),
-      Container(
-        width: boxWidth,
-        height: boxWidth,
-        child: Center(
+        Center(
           child: Container(
-            // padding: EdgeInsets.all(1.0),
-            height: imageWidth,
-            width: imageWidth,
-            decoration: BoxDecoration(
-              color: Colors.white,
-              borderRadius: BorderRadius.circular(imageWidth / 2),
-            ),
-            child: CachedNetworkImage(
-              imageUrl: widget.user.headshot,
-              imageBuilder: (context, imageProvider) => Container(
-                width: imageWidth,
+            width: boxWidth,
+            height: boxWidth,
+            child: Center(
+              child: Container(
                 height: imageWidth,
+                width: imageWidth,
                 decoration: BoxDecoration(
-                  shape: BoxShape.circle,
-                  image:
-                      DecorationImage(image: imageProvider, fit: BoxFit.cover),
+                  color: Colors.white,
+                  borderRadius: BorderRadius.circular(imageWidth / 2),
+                ),
+                child: CachedNetworkImage(
+                  imageUrl: widget.user.headshot,
+                  imageBuilder: (context, imageProvider) => Container(
+                    width: imageWidth,
+                    height: imageWidth,
+                    decoration: BoxDecoration(
+                      shape: BoxShape.circle,
+                      image: DecorationImage(
+                          image: imageProvider, fit: BoxFit.cover),
+                    ),
+                  ),
+                  placeholder: (context, url) => CircularProgressIndicator(),
+                  errorWidget: (context, url, error) => Icon(Icons.error),
                 ),
               ),
-              placeholder: (context, url) => CircularProgressIndicator(),
-              errorWidget: (context, url, error) => Icon(Icons.error),
             ),
           ),
         ),
-      ),
-      Positioned(
-        width: 20,
-        height: 20,
-        bottom: 0,
-        left: ((boxWidth / 2) - (20 / 2)),
-        child: Container(
-          decoration: BoxDecoration(
-              color: Colors.white, borderRadius: BorderRadius.circular(15.0)),
+        Positioned(
+          width: 24,
+          height: 24,
+          bottom: 0,
+          left: ((width / 2) - (24 / 2)),
+          child: Container(
+            decoration: BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.circular(24 / 2)),
+          ),
         ),
-      ),
-      Positioned(
-        bottom: 0,
-        left: ((boxWidth / 2) - (20 / 2)),
-        child: Icon(Icons.add_circle, color: Colors.pinkAccent, size: 20),
-      )
-    ]);
+        Positioned(
+          width: 24,
+          height: 24,
+          bottom: 0,
+          left: ((width / 2) - (24 / 2)),
+          child: Center(
+            child: Icon(
+              Icons.add_circle,
+              color: Colors.pinkAccent,
+              size: 24,
+            ),
+          ),
+        )
+      ]),
+    );
   }
 
   LinearGradient get musicGradient => LinearGradient(colors: [
@@ -229,7 +257,7 @@ class _VideoSlateState extends State<VideoSlate>
       ], begin: Alignment.bottomLeft, end: Alignment.topRight);
 
   getMusicDisc({double width}) {
-    double imageWidth = width / 1.4;
+    double imageWidth = width / 1.5;
 
     return Container(
         margin: EdgeInsets.only(top: 10.0),
@@ -266,7 +294,7 @@ class _VideoSlateState extends State<VideoSlate>
   buildActionButton(var height, var width) {
     return Container(
       constraints: BoxConstraints(
-        minHeight: height / 1.5,
+        minHeight: height / 2,
         // minWidth: secondMsectionw,
       ),
       // color: Colors.blueGrey,
@@ -279,7 +307,7 @@ class _VideoSlateState extends State<VideoSlate>
           ),
           getActionButton(
               icon: TikTokIcons.heart,
-              count: '${widget.likeCount}',
+              count: '${widget.likeCount} likes',
               width: width),
           getActionButton(
               icon: TikTokIcons.reply,
@@ -290,9 +318,12 @@ class _VideoSlateState extends State<VideoSlate>
               count: '${widget.shareCount}',
               width: width),
           SizedBox(
-            height: width / 3,
+            height: width / 3.7,
           ),
           getMusicDisc(width: width),
+          SizedBox(
+            height: width / 7,
+          ),
         ],
       ),
     );
@@ -347,25 +378,25 @@ class _VideoSlateState extends State<VideoSlate>
   @override
   Widget build(BuildContext context) {
     final Size deviceSize = MediaQuery.of(context).size;
-    final double topSectionh = deviceSize.height / 8;
+    // final double topSectionh = deviceSize.height / 8;
     final double middleSectionh = deviceSize.height / 1.25;
     final double firstMsectionw = deviceSize.width / 1.3;
 
     final double secondMsectionw = deviceSize.width - firstMsectionw;
 
-    final double bottomSectionh =
-        deviceSize.height - (topSectionh + middleSectionh);
+    // final double bottomSectionh =
+    //     deviceSize.height - (topSectionh + middleSectionh);
 
     // TODO: implement build
     return GestureDetector(
       onTapDown: (tap) {
         print('tap down');
         setState(() {
-          // _controller.value.isPlaying ? _controller.pause() : null;
+          rotationController.isAnimating ? rotationController.stop() : null;
+          _controller.value.isPlaying ? _controller.pause() : null;
         });
       },
       onTap: () {
-        print('tap ');
         setState(() {
           rotationController.isAnimating && _controller.value.isPlaying
               ? rotationController.stop()
@@ -373,16 +404,6 @@ class _VideoSlateState extends State<VideoSlate>
           _controller.value.isPlaying
               ? _controller.pause()
               : _controller.play();
-          // print(
-          //     'rotating : ${rotationController.isAnimating} ${rotationController.status == AnimationStatus.dismissed} ${rotationController.status == AnimationStatus.forward}');
-
-          // rotationController.forward();
-          // print(
-          //     'rotating : ${rotationController.isAnimating} ${rotationController.status == AnimationStatus.dismissed} ${rotationController.status == AnimationStatus.forward}');
-
-          // rotationController.stop();
-          // print(
-          //     'rotating : ${rotationController.isAnimating} ${rotationController.status == AnimationStatus.dismissed} ${rotationController.status == AnimationStatus.forward}');
         });
       },
       child: Stack(
@@ -436,7 +457,7 @@ class _VideoSlateState extends State<VideoSlate>
                   ),
                 ),
                 SizedBox(
-                  height: 50.0,
+                  height: bottomTabBarHeight,
                 )
               ],
             ),

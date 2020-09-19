@@ -15,23 +15,12 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       theme: ThemeData(
-        // Uncomment in phase 3 to apply white to text
         textTheme: Theme.of(context)
             .textTheme
             .apply(bodyColor: Colors.white, displayColor: Colors.white),
       ),
       home: Scaffold(
         body: Home(),
-        // bottomNavigationBar: CupertinoTabBar(
-        //   items: [
-        //     BottomNavigationBarItem(
-        //       icon: Icon(Icons.menu),
-        //     ),
-        //     BottomNavigationBarItem(
-        //       icon: Icon(Icons.menu),
-        //     ),
-        //   ],
-        // ),
       ),
     );
   }
