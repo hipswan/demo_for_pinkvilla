@@ -22,16 +22,16 @@ class MyApp extends StatelessWidget {
       ),
       home: Scaffold(
         body: Home(),
-        bottomNavigationBar: CupertinoTabBar(
-          items: [
-            BottomNavigationBarItem(
-              icon: Icon(Icons.menu),
-            ),
-            BottomNavigationBarItem(
-              icon: Icon(Icons.menu),
-            ),
-          ],
-        ),
+        // bottomNavigationBar: CupertinoTabBar(
+        //   items: [
+        //     BottomNavigationBarItem(
+        //       icon: Icon(Icons.menu),
+        //     ),
+        //     BottomNavigationBarItem(
+        //       icon: Icon(Icons.menu),
+        //     ),
+        //   ],
+        // ),
       ),
     );
   }
