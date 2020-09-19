@@ -2,9 +2,12 @@ import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:http/http.dart' as http;
+import 'package:pinkvilla_task/model/user_detail.dart';
 import 'package:pinkvilla_task/tik_tok_icons_icons.dart';
 import 'widgets/video_slate.dart';
 import 'dart:convert';
+import 'package:sprintf/sprintf.dart';
+import 'package:preload_page_view/preload_page_view.dart';
 
 class Home extends StatefulWidget {
   Home({Key key}) : super(key: key);
@@ -14,44 +17,78 @@ class Home extends StatefulWidget {
 }
 
 class _HomeState extends State<Home> {
-  List<VideoSlate> videoSlateList = [];
+  List<dynamic> videoSlateDetails = [];
+  bool isLoading = false;
+  PreloadPageController _controller;
+  int current = 0;
+  bool isOnPageTurning = false;
+
+  void scrollListener() {
+    if (isOnPageTurning &&
+        _controller.page == _controller.page.roundToDouble()) {
+      setState(() {
+        current = _controller.page.toInt();
+        isOnPageTurning = false;
+      });
+    } else if (!isOnPageTurning && current.toDouble() != _controller.page) {
+      if ((current.toDouble() - _controller.page).abs() > 0.1) {
+        setState(() {
+          isOnPageTurning = true;
+        });
+      }
+    }
+  }
 
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
+    getVideoSlateDetail();
+    _controller = PreloadPageController();
+    _controller.addListener(scrollListener);
+  }
+
+  getVideoSlateDetail() async {
+    http.Response response = await http
+        .get('https://www.pinkvilla.com/feed/video-test/video-feed.json');
+
+    List<dynamic> jsonData = jsonDecode(response.body);
+    videoSlateDetails = jsonData
+        .map(
+          (e) => (e),
+        )
+        .toList();
+    setState(() {
+      isLoading = true;
+    });
   }
 
   Widget buildVideoSlate() {
-    return FutureBuilder<http.Response>(
-      future:
-          http.get('https://www.pinkvilla.com/feed/video-test/video-feed.json'),
-      builder: (context, snapshot) {
-        if (!snapshot.hasData) {
-          return CircularProgressIndicator();
-        }
-        List<dynamic> jsonData = jsonDecode(snapshot.data.body);
-        // print(snapshot.data);
-
-        videoSlateList = jsonData
-            .map(
-              (e) => VideoSlate.fromJson(e),
-            )
-            .toList();
-
-        return PageView(
-          pageSnapping: true,
-          scrollDirection: Axis.vertical,
-          children: videoSlateList,
-          onPageChanged: (int pageIndex) {
-            print(pageIndex);
-          },
-          physics: ClampingScrollPhysics(
-            parent: AlwaysScrollableScrollPhysics(),
-          ),
-        );
-      },
-    );
+    return (isLoading && videoSlateDetails.length > 0)
+        ? PreloadPageView.builder(
+            controller: _controller,
+            scrollDirection: Axis.vertical,
+            preloadPagesCount: videoSlateDetails.length - 1,
+            itemBuilder: (context, pageIndex) {
+              print('$pageIndex');
+              return VideoSlate.details(
+                pageIndex: pageIndex,
+                currentPageIndex: current,
+                isPaused: isOnPageTurning,
+                videoUrl: videoSlateDetails[pageIndex]['url'],
+                commentCount: videoSlateDetails[pageIndex]['comment-count'],
+                likeCount: videoSlateDetails[pageIndex]['like-count'],
+                shareCount: videoSlateDetails[pageIndex]['share-count'],
+                title: videoSlateDetails[pageIndex]['title'],
+                user: User(
+                  headshot: videoSlateDetails[pageIndex]['user']['headshot'],
+                  name: videoSlateDetails[pageIndex]['user']['name'],
+                ),
+              );
+            },
+          )
+        : Center(
+            child: CircularProgressIndicator(),
+          );
   }
 
   buildCentreIcon() {

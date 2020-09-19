@@ -13,10 +13,17 @@ class VideoSlate extends StatefulWidget {
   final int shareCount;
   final String title;
   final User user;
+
+  final int pageIndex;
+  final int currentPageIndex;
+  bool isPaused;
   // final dynamic color;
   // VideoSlate({this.color});
   VideoSlate.details(
-      {this.videoUrl,
+      {this.pageIndex,
+      this.currentPageIndex,
+      this.isPaused,
+      this.videoUrl,
       this.commentCount,
       this.likeCount,
       this.shareCount,
@@ -42,7 +49,10 @@ class VideoSlate extends StatefulWidget {
 }
 
 class _VideoSlateState extends State<VideoSlate>
-    with SingleTickerProviderStateMixin {
+    with
+        SingleTickerProviderStateMixin,
+        AutomaticKeepAliveClientMixin<VideoSlate> {
+  bool initialized = false;
   CachedVideoPlayerController _controller;
   AnimationController rotationController;
 
@@ -51,7 +61,7 @@ class _VideoSlateState extends State<VideoSlate>
   @override
   void initState() {
     super.initState();
-    print('likecount ${widget.likeCount}');
+    print('Initialize ${widget.pageIndex}');
     rotationController = AnimationController(
         duration: const Duration(milliseconds: 2000), vsync: this);
     rotationController.forward();
@@ -64,49 +74,20 @@ class _VideoSlateState extends State<VideoSlate>
     });
     _controller = CachedVideoPlayerController.network(
       widget.videoUrl,
-    )
-      ..setLooping(true)
-      ..initialize().then(
+    )..initialize().then(
         (_) {
           // Ensure the first frame is shown after the video is initialized, even before the play button has been pressed.
           setState(() {
             _controller.play();
+            initialized = true;
           });
         },
       );
-    // _controller.addListener(() {
-    //   print('closure');
-    // });
-  }
-
-  @override
-  // TODO: implement mounted
-  bool get mounted => super.mounted;
-
-  @override
-  void deactivate() {
-    // TODO: implement deactivate
-    super.deactivate();
-    print('deactivate ${_VideoSlateState().mounted} ${widget.user.name}');
-    // setState(() {
-    //   (_VideoSlateState().mounted && !_controller.value.isPlaying)
-    //       ? _controller.play()
-    //       : null;
-    // });
-  }
-
-  @override
-  void didChangeDependencies() {
-    // TODO: implement didChangeDependencies
-    super.didChangeDependencies();
-    // print('dependencies change  ${this.mounted} ${widget.user.name}');
-  }
-
-  @override
-  void didUpdateWidget(VideoSlate oldWidget) {
-    // TODO: implement didUpdateWidget
-    super.didUpdateWidget(oldWidget);
-    // print('update widget ${widget.user.name}');
+    _controller.addListener(() {
+      if (_controller.value.position == _controller.value.duration) {
+        _controller.seekTo(Duration.zero);
+      }
+    });
   }
 
   @override
@@ -333,7 +314,7 @@ class _VideoSlateState extends State<VideoSlate>
   buildMetaData(var width) {
     return Container(
       constraints: BoxConstraints(
-        maxWidth: width,
+        maxWidth: width / 1.5,
       ),
       padding: EdgeInsets.only(left: 15.0),
       child: Column(
@@ -378,6 +359,17 @@ class _VideoSlateState extends State<VideoSlate>
 
   @override
   Widget build(BuildContext context) {
+    if (widget.pageIndex == widget.currentPageIndex &&
+        !widget.isPaused &&
+        initialized) {
+      print('condition true called');
+      _controller.play();
+      rotationController.isAnimating ? null : rotationController.forward();
+    } else {
+      print('condition true called');
+      _controller.pause();
+      rotationController.isAnimating ? rotationController.stop() : null;
+    }
     final Size deviceSize = MediaQuery.of(context).size;
     // final double topSectionh = deviceSize.height / 8;
     final double middleSectionh = deviceSize.height / 1.25;
@@ -391,22 +383,36 @@ class _VideoSlateState extends State<VideoSlate>
     // TODO: implement build
     return GestureDetector(
       onTapDown: (tap) {
-        print('tap down');
+        print(
+            '1.tap down isplaying ${_controller.value.isPlaying} paused ${widget.isPaused} isrotating ${rotationController.isAnimating}  initialised $initialized');
         setState(() {
-          rotationController.isAnimating ? rotationController.stop() : null;
-          _controller.value.isPlaying ? _controller.pause() : null;
+          widget.isPaused = !widget.isPaused;
         });
+
+        print(
+            '2.tap down isplaying ${_controller.value.isPlaying} paused ${widget.isPaused} isrotating ${rotationController.isAnimating}  initialised $initialized');
       },
-      onTap: () {
+      onTapUp: (tap) {
+        print(
+            '1.tap up isplaying ${_controller.value.isPlaying} paused ${widget.isPaused} isrotating ${rotationController.isAnimating}  initialised $initialized');
+
         setState(() {
-          rotationController.isAnimating && _controller.value.isPlaying
-              ? rotationController.stop()
-              : rotationController.forward();
-          _controller.value.isPlaying
-              ? _controller.pause()
-              : _controller.play();
+          widget.isPaused = !widget.isPaused;
         });
+
+        print(
+            '2.tap down isplaying ${_controller.value.isPlaying} paused ${widget.isPaused} isrotating ${rotationController.isAnimating}  initialised $initialized');
       },
+      // onTap: () {
+      //   print(
+      //       'tap isplaying ${_controller.value.isPlaying} paused ${widget.isPaused}');
+      //   setState(() {
+      //     rotationController.isAnimating && _controller.value.isPlaying
+      //         ? rotationController.stop()
+      //         : rotationController.forward();
+      //     initialized = !initialized;
+      //   });
+      // },
       child: Stack(
         children: [
           Container(
@@ -467,4 +473,8 @@ class _VideoSlateState extends State<VideoSlate>
       ),
     );
   }
+
+  @override
+  // TODO: implement wantKeepAlive
+  bool get wantKeepAlive => false;
 }
