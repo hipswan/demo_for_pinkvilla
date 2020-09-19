@@ -20,7 +20,6 @@ class _HomeState extends State<Home> {
   void initState() {
     // TODO: implement initState
     super.initState();
-    print('Intro');
   }
 
   Widget buildVideoSlate() {
@@ -32,7 +31,7 @@ class _HomeState extends State<Home> {
           return CircularProgressIndicator();
         }
         List<dynamic> jsonData = jsonDecode(snapshot.data.body);
-        print(snapshot.data);
+        // print(snapshot.data);
 
         videoSlateList = jsonData
             .map(
@@ -41,8 +40,12 @@ class _HomeState extends State<Home> {
             .toList();
 
         return PageView(
+          pageSnapping: true,
           scrollDirection: Axis.vertical,
           children: videoSlateList,
+          onPageChanged: (int pageIndex) {
+            print(pageIndex);
+          },
           physics: ClampingScrollPhysics(
             parent: AlwaysScrollableScrollPhysics(),
           ),

@@ -4,6 +4,7 @@ import 'package:video_player/video_player.dart';
 import '../model/user_detail.dart';
 import '../tik_tok_icons_icons.dart';
 import 'dart:math' as math;
+import 'package:cached_video_player/cached_video_player.dart';
 
 class VideoSlate extends StatefulWidget {
   final String videoUrl;
@@ -42,7 +43,7 @@ class VideoSlate extends StatefulWidget {
 
 class _VideoSlateState extends State<VideoSlate>
     with SingleTickerProviderStateMixin {
-  VideoPlayerController _controller;
+  CachedVideoPlayerController _controller;
   AnimationController rotationController;
 
   get bottomTabBarHeight => 50.0;
@@ -61,7 +62,7 @@ class _VideoSlateState extends State<VideoSlate>
         }
       });
     });
-    _controller = VideoPlayerController.network(
+    _controller = CachedVideoPlayerController.network(
       widget.videoUrl,
     )
       ..setLooping(true)
@@ -160,10 +161,10 @@ class _VideoSlateState extends State<VideoSlate>
   }
 
   getHeadshot({double width, String imageUrl}) {
-    double boxWidth = width / 1.2;
+    double boxWidth = width / 1.3;
     double imageWidth = width / 1.5;
 
-    double headShotBorderWidth = 3;
+    double headShotBorderWidth = 2;
     return Container(
       width: width,
       height: width,
@@ -217,10 +218,10 @@ class _VideoSlateState extends State<VideoSlate>
           ),
         ),
         Positioned(
-          width: 24,
-          height: 24,
-          bottom: 0,
-          left: ((width / 2) - (24 / 2)),
+          width: 22,
+          height: 22,
+          bottom: 3,
+          left: ((width / 2) - (22 / 2)),
           child: Container(
             decoration: BoxDecoration(
                 color: Colors.white,
@@ -228,15 +229,15 @@ class _VideoSlateState extends State<VideoSlate>
           ),
         ),
         Positioned(
-          width: 24,
-          height: 24,
-          bottom: 0,
-          left: ((width / 2) - (24 / 2)),
+          width: 22,
+          height: 22,
+          bottom: 3,
+          left: ((width / 2) - (22 / 2)),
           child: Center(
             child: Icon(
               Icons.add_circle,
               color: Colors.pinkAccent,
-              size: 24,
+              size: 22,
             ),
           ),
         )
@@ -318,7 +319,7 @@ class _VideoSlateState extends State<VideoSlate>
               count: '${widget.shareCount}',
               width: width),
           SizedBox(
-            height: width / 3.7,
+            height: width / 4,
           ),
           getMusicDisc(width: width),
           SizedBox(
@@ -334,7 +335,7 @@ class _VideoSlateState extends State<VideoSlate>
       constraints: BoxConstraints(
         maxWidth: width,
       ),
-      padding: EdgeInsets.only(left: 20.0),
+      padding: EdgeInsets.only(left: 15.0),
       child: Column(
         mainAxisSize: MainAxisSize.max,
         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
@@ -416,10 +417,10 @@ class _VideoSlateState extends State<VideoSlate>
             decoration: BoxDecoration(
                 // color: Colors.amber,
                 ),
-            child: _controller.value.initialized
+            child: _controller.value != null && _controller.value.initialized
                 ? AspectRatio(
                     aspectRatio: _controller.value.aspectRatio,
-                    child: VideoPlayer(_controller),
+                    child: CachedVideoPlayer(_controller),
                   )
                 : Container(
                     child: Center(
