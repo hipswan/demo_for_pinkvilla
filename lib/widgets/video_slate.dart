@@ -5,6 +5,8 @@ import '../model/user_detail.dart';
 import '../tik_tok_icons_icons.dart';
 import 'dart:math' as math;
 import 'package:cached_video_player/cached_video_player.dart';
+import 'action_button.dart';
+import 'headshot.dart';
 
 class VideoSlate extends StatefulWidget {
   final String videoUrl;
@@ -99,133 +101,6 @@ class _VideoSlateState extends State<VideoSlate>
     // print('dispose ${widget.user.name}');
   }
 
-  getActionButton({IconData icon, String count, double width, double height}) {
-    var actionButtomWidth = width / 1.2;
-    var actionIconSize = width / 2.5;
-    return Container(
-      // margin: EdgeInsets.only(
-      //   top: 5.0,
-      //   bottom: 5.0,
-      // ),
-      width: actionButtomWidth,
-      height: actionButtomWidth,
-      child: Column(
-        mainAxisSize: MainAxisSize.max,
-        mainAxisAlignment: MainAxisAlignment.center,
-        crossAxisAlignment: CrossAxisAlignment.center,
-        children: [
-          Container(
-            child: Center(
-              child: Icon(
-                icon,
-                size: actionIconSize,
-                color: Colors.grey[200],
-              ),
-            ),
-          ),
-          Expanded(
-            child: Container(
-              width: width,
-              padding: EdgeInsets.all(10.0),
-              child: Text(
-                count,
-                style: TextStyle(
-                  fontSize: 12.0,
-                ),
-                textAlign: TextAlign.center,
-              ),
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
-  getHeadshot({double width, String imageUrl}) {
-    double boxWidth = width / 1.3;
-    double imageWidth = width / 1.5;
-
-    double headShotBorderWidth = 2;
-    return Container(
-      width: width,
-      height: width,
-      child: Stack(children: [
-        Center(
-          child: Container(
-            width: boxWidth,
-            height: boxWidth,
-            child: Container(
-              padding: EdgeInsets.all(1.0),
-              decoration: BoxDecoration(
-                color: Colors.transparent,
-                border: Border.all(
-                  color: Colors.pinkAccent.withOpacity(0.8),
-                  width: headShotBorderWidth,
-                  style: BorderStyle.solid,
-                ),
-                borderRadius: BorderRadius.circular(boxWidth / 2),
-              ),
-            ),
-          ),
-        ),
-        Center(
-          child: Container(
-            width: boxWidth,
-            height: boxWidth,
-            child: Center(
-              child: Container(
-                height: imageWidth,
-                width: imageWidth,
-                decoration: BoxDecoration(
-                  color: Colors.white,
-                  borderRadius: BorderRadius.circular(imageWidth / 2),
-                ),
-                child: CachedNetworkImage(
-                  imageUrl: widget.user.headshot,
-                  imageBuilder: (context, imageProvider) => Container(
-                    width: imageWidth,
-                    height: imageWidth,
-                    decoration: BoxDecoration(
-                      shape: BoxShape.circle,
-                      image: DecorationImage(
-                          image: imageProvider, fit: BoxFit.cover),
-                    ),
-                  ),
-                  placeholder: (context, url) => CircularProgressIndicator(),
-                  errorWidget: (context, url, error) => Icon(Icons.error),
-                ),
-              ),
-            ),
-          ),
-        ),
-        Positioned(
-          width: 22,
-          height: 22,
-          bottom: 3,
-          left: ((width / 2) - (22 / 2)),
-          child: Container(
-            decoration: BoxDecoration(
-                color: Colors.white,
-                borderRadius: BorderRadius.circular(24 / 2)),
-          ),
-        ),
-        Positioned(
-          width: 22,
-          height: 22,
-          bottom: 3,
-          left: ((width / 2) - (22 / 2)),
-          child: Center(
-            child: Icon(
-              Icons.add_circle,
-              color: Colors.pinkAccent,
-              size: 22,
-            ),
-          ),
-        )
-      ]),
-    );
-  }
-
   LinearGradient get musicGradient => LinearGradient(colors: [
         Colors.grey[800],
         Colors.grey[900],
@@ -283,19 +158,22 @@ class _VideoSlateState extends State<VideoSlate>
       child: Column(
         mainAxisSize: MainAxisSize.max,
         children: [
-          getHeadshot(width: width, imageUrl: widget.user.headshot),
+          Headshot(
+            width: width,
+            imageUrl: widget.user.headshot,
+          ),
           SizedBox(
             height: width / 5,
           ),
-          getActionButton(
+          ActionButton(
               icon: TikTokIcons.heart,
               count: '${widget.likeCount} likes',
               width: width),
-          getActionButton(
+          ActionButton(
               icon: TikTokIcons.reply,
               count: '${widget.commentCount}',
               width: width),
-          getActionButton(
+          ActionButton(
               icon: TikTokIcons.chat_bubble,
               count: '${widget.shareCount}',
               width: width),
