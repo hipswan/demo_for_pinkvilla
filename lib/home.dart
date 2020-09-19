@@ -47,6 +47,13 @@ class _HomeState extends State<Home> {
     _controller.addListener(scrollListener);
   }
 
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+    // print('dispose ${widget.user.name}');
+  }
+
   getVideoSlateDetail() async {
     http.Response response = await http
         .get('https://www.pinkvilla.com/feed/video-test/video-feed.json');
@@ -57,6 +64,7 @@ class _HomeState extends State<Home> {
           (e) => (e),
         )
         .toList();
+    print(videoSlateDetails[6]);
     setState(() {
       isLoading = true;
     });
@@ -68,6 +76,7 @@ class _HomeState extends State<Home> {
             controller: _controller,
             scrollDirection: Axis.vertical,
             preloadPagesCount: videoSlateDetails.length - 1,
+            itemCount: videoSlateDetails.length - 1,
             itemBuilder: (context, pageIndex) {
               print('$pageIndex');
               return VideoSlate.details(
