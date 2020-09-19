@@ -61,7 +61,7 @@ class _VideoSlateState extends State<VideoSlate>
   @override
   void initState() {
     super.initState();
-    print('Initialize ${widget.pageIndex}');
+    // print('Initialize ${widget.pageIndex}');
     rotationController = AnimationController(
         duration: const Duration(milliseconds: 2000), vsync: this);
     rotationController.forward();
@@ -362,11 +362,11 @@ class _VideoSlateState extends State<VideoSlate>
     if (widget.pageIndex == widget.currentPageIndex &&
         !widget.isPaused &&
         initialized) {
-      print('condition true called');
+      // print('condition true called');
       _controller.play();
       rotationController.isAnimating ? null : rotationController.forward();
     } else {
-      print('condition true called');
+      // print('condition true called');
       _controller.pause();
       rotationController.isAnimating ? rotationController.stop() : null;
     }
@@ -383,25 +383,25 @@ class _VideoSlateState extends State<VideoSlate>
     // TODO: implement build
     return GestureDetector(
       onTapDown: (tap) {
-        print(
-            '1.tap down isplaying ${_controller.value.isPlaying} paused ${widget.isPaused} isrotating ${rotationController.isAnimating}  initialised $initialized');
+        // print(
+        //     '1.tap down isplaying ${_controller.value.isPlaying} paused ${widget.isPaused} isrotating ${rotationController.isAnimating}  initialised $initialized');
         setState(() {
           widget.isPaused = !widget.isPaused;
         });
 
-        print(
-            '2.tap down isplaying ${_controller.value.isPlaying} paused ${widget.isPaused} isrotating ${rotationController.isAnimating}  initialised $initialized');
+        //   print(
+        //       '2.tap down isplaying ${_controller.value.isPlaying} paused ${widget.isPaused} isrotating ${rotationController.isAnimating}  initialised $initialized');
       },
       onTapUp: (tap) {
-        print(
-            '1.tap up isplaying ${_controller.value.isPlaying} paused ${widget.isPaused} isrotating ${rotationController.isAnimating}  initialised $initialized');
+        // print(
+        //     '1.tap up isplaying ${_controller.value.isPlaying} paused ${widget.isPaused} isrotating ${rotationController.isAnimating}  initialised $initialized');
 
         setState(() {
           widget.isPaused = !widget.isPaused;
         });
 
-        print(
-            '2.tap down isplaying ${_controller.value.isPlaying} paused ${widget.isPaused} isrotating ${rotationController.isAnimating}  initialised $initialized');
+        // print(
+        //     '2.tap down isplaying ${_controller.value.isPlaying} paused ${widget.isPaused} isrotating ${rotationController.isAnimating}  initialised $initialized');
       },
       // onTap: () {
       //   print(

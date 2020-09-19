@@ -64,7 +64,7 @@ class _HomeState extends State<Home> {
           (e) => (e),
         )
         .toList();
-    print(videoSlateDetails[6]);
+    // print(videoSlateDetails[6]);
     setState(() {
       isLoading = true;
     });
@@ -78,7 +78,7 @@ class _HomeState extends State<Home> {
             preloadPagesCount: videoSlateDetails.length - 1,
             itemCount: videoSlateDetails.length - 1,
             itemBuilder: (context, pageIndex) {
-              print('$pageIndex');
+              // print('$pageIndex');
               return VideoSlate.details(
                 pageIndex: pageIndex,
                 currentPageIndex: current,
