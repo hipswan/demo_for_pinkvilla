@@ -30,6 +30,9 @@ dependencies:
   http: ^0.12.0+2
   video_player: 0.10.12
   cached_network_image: ^2.0.0
+  cached_video_player: 1.0.3
+  sprintf: ^4.0.2
+  preload_page_view: ^0.1.4
 dev_dependencies:
   flutter_test:
     sdk: flutter

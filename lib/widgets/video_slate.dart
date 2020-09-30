@@ -4,6 +4,9 @@ import 'package:video_player/video_player.dart';
 import '../model/user_detail.dart';
 import '../tik_tok_icons_icons.dart';
 import 'dart:math' as math;
+import 'package:cached_video_player/cached_video_player.dart';
+import 'action_button.dart';
+import 'headshot.dart';
 
 class VideoSlate extends StatefulWidget {
   final String videoUrl;
@@ -12,10 +15,17 @@ class VideoSlate extends StatefulWidget {
   final int shareCount;
   final String title;
   final User user;
+
+  final int pageIndex;
+  final int currentPageIndex;
+  bool isPaused;
   // final dynamic color;
   // VideoSlate({this.color});
   VideoSlate.details(
-      {this.videoUrl,
+      {this.pageIndex,
+      this.currentPageIndex,
+      this.isPaused,
+      this.videoUrl,
       this.commentCount,
       this.likeCount,
       this.shareCount,
@@ -41,8 +51,11 @@ class VideoSlate extends StatefulWidget {
 }
 
 class _VideoSlateState extends State<VideoSlate>
-    with SingleTickerProviderStateMixin {
-  VideoPlayerController _controller;
+    with
+        SingleTickerProviderStateMixin,
+        AutomaticKeepAliveClientMixin<VideoSlate> {
+  bool initialized = false;
+  CachedVideoPlayerController _controller;
   AnimationController rotationController;
 
   get bottomTabBarHeight => 50.0;
@@ -50,7 +63,7 @@ class _VideoSlateState extends State<VideoSlate>
   @override
   void initState() {
     super.initState();
-    print('likecount ${widget.likeCount}');
+    // print('Initialize ${widget.pageIndex}');
     rotationController = AnimationController(
         duration: const Duration(milliseconds: 2000), vsync: this);
     rotationController.forward();
@@ -61,51 +74,22 @@ class _VideoSlateState extends State<VideoSlate>
         }
       });
     });
-    _controller = VideoPlayerController.network(
+    _controller = CachedVideoPlayerController.network(
       widget.videoUrl,
-    )
-      ..setLooping(true)
-      ..initialize().then(
+    )..initialize().then(
         (_) {
           // Ensure the first frame is shown after the video is initialized, even before the play button has been pressed.
           setState(() {
             _controller.play();
+            initialized = true;
           });
         },
       );
-    // _controller.addListener(() {
-    //   print('closure');
-    // });
-  }
-
-  @override
-  // TODO: implement mounted
-  bool get mounted => super.mounted;
-
-  @override
-  void deactivate() {
-    // TODO: implement deactivate
-    super.deactivate();
-    print('deactivate ${_VideoSlateState().mounted} ${widget.user.name}');
-    // setState(() {
-    //   (_VideoSlateState().mounted && !_controller.value.isPlaying)
-    //       ? _controller.play()
-    //       : null;
-    // });
-  }
-
-  @override
-  void didChangeDependencies() {
-    // TODO: implement didChangeDependencies
-    super.didChangeDependencies();
-    // print('dependencies change  ${this.mounted} ${widget.user.name}');
-  }
-
-  @override
-  void didUpdateWidget(VideoSlate oldWidget) {
-    // TODO: implement didUpdateWidget
-    super.didUpdateWidget(oldWidget);
-    // print('update widget ${widget.user.name}');
+    _controller.addListener(() {
+      if (_controller.value.position == _controller.value.duration) {
+        _controller.seekTo(Duration.zero);
+      }
+    });
   }
 
   @override
@@ -115,133 +99,6 @@ class _VideoSlateState extends State<VideoSlate>
     rotationController.dispose();
     super.dispose();
     // print('dispose ${widget.user.name}');
-  }
-
-  getActionButton({IconData icon, String count, double width, double height}) {
-    var actionButtomWidth = width / 1.2;
-    var actionIconSize = width / 2.5;
-    return Container(
-      // margin: EdgeInsets.only(
-      //   top: 5.0,
-      //   bottom: 5.0,
-      // ),
-      width: actionButtomWidth,
-      height: actionButtomWidth,
-      child: Column(
-        mainAxisSize: MainAxisSize.max,
-        mainAxisAlignment: MainAxisAlignment.center,
-        crossAxisAlignment: CrossAxisAlignment.center,
-        children: [
-          Container(
-            child: Center(
-              child: Icon(
-                icon,
-                size: actionIconSize,
-                color: Colors.grey[200],
-              ),
-            ),
-          ),
-          Expanded(
-            child: Container(
-              width: width,
-              padding: EdgeInsets.all(10.0),
-              child: Text(
-                count,
-                style: TextStyle(
-                  fontSize: 12.0,
-                ),
-                textAlign: TextAlign.center,
-              ),
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
-  getHeadshot({double width, String imageUrl}) {
-    double boxWidth = width / 1.2;
-    double imageWidth = width / 1.5;
-
-    double headShotBorderWidth = 3;
-    return Container(
-      width: width,
-      height: width,
-      child: Stack(children: [
-        Center(
-          child: Container(
-            width: boxWidth,
-            height: boxWidth,
-            child: Container(
-              padding: EdgeInsets.all(1.0),
-              decoration: BoxDecoration(
-                color: Colors.transparent,
-                border: Border.all(
-                  color: Colors.pinkAccent.withOpacity(0.8),
-                  width: headShotBorderWidth,
-                  style: BorderStyle.solid,
-                ),
-                borderRadius: BorderRadius.circular(boxWidth / 2),
-              ),
-            ),
-          ),
-        ),
-        Center(
-          child: Container(
-            width: boxWidth,
-            height: boxWidth,
-            child: Center(
-              child: Container(
-                height: imageWidth,
-                width: imageWidth,
-                decoration: BoxDecoration(
-                  color: Colors.white,
-                  borderRadius: BorderRadius.circular(imageWidth / 2),
-                ),
-                child: CachedNetworkImage(
-                  imageUrl: widget.user.headshot,
-                  imageBuilder: (context, imageProvider) => Container(
-                    width: imageWidth,
-                    height: imageWidth,
-                    decoration: BoxDecoration(
-                      shape: BoxShape.circle,
-                      image: DecorationImage(
-                          image: imageProvider, fit: BoxFit.cover),
-                    ),
-                  ),
-                  placeholder: (context, url) => CircularProgressIndicator(),
-                  errorWidget: (context, url, error) => Icon(Icons.error),
-                ),
-              ),
-            ),
-          ),
-        ),
-        Positioned(
-          width: 24,
-          height: 24,
-          bottom: 0,
-          left: ((width / 2) - (24 / 2)),
-          child: Container(
-            decoration: BoxDecoration(
-                color: Colors.white,
-                borderRadius: BorderRadius.circular(24 / 2)),
-          ),
-        ),
-        Positioned(
-          width: 24,
-          height: 24,
-          bottom: 0,
-          left: ((width / 2) - (24 / 2)),
-          child: Center(
-            child: Icon(
-              Icons.add_circle,
-              color: Colors.pinkAccent,
-              size: 24,
-            ),
-          ),
-        )
-      ]),
-    );
   }
 
   LinearGradient get musicGradient => LinearGradient(colors: [
@@ -301,24 +158,27 @@ class _VideoSlateState extends State<VideoSlate>
       child: Column(
         mainAxisSize: MainAxisSize.max,
         children: [
-          getHeadshot(width: width, imageUrl: widget.user.headshot),
+          Headshot(
+            width: width,
+            imageUrl: widget.user.headshot,
+          ),
           SizedBox(
             height: width / 5,
           ),
-          getActionButton(
+          ActionButton(
               icon: TikTokIcons.heart,
               count: '${widget.likeCount} likes',
               width: width),
-          getActionButton(
+          ActionButton(
               icon: TikTokIcons.reply,
               count: '${widget.commentCount}',
               width: width),
-          getActionButton(
+          ActionButton(
               icon: TikTokIcons.chat_bubble,
               count: '${widget.shareCount}',
               width: width),
           SizedBox(
-            height: width / 3.7,
+            height: width / 4,
           ),
           getMusicDisc(width: width),
           SizedBox(
@@ -332,9 +192,9 @@ class _VideoSlateState extends State<VideoSlate>
   buildMetaData(var width) {
     return Container(
       constraints: BoxConstraints(
-        maxWidth: width,
+        maxWidth: width / 1.5,
       ),
-      padding: EdgeInsets.only(left: 20.0),
+      padding: EdgeInsets.only(left: 15.0),
       child: Column(
         mainAxisSize: MainAxisSize.max,
         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
@@ -377,6 +237,17 @@ class _VideoSlateState extends State<VideoSlate>
 
   @override
   Widget build(BuildContext context) {
+    if (widget.pageIndex == widget.currentPageIndex &&
+        !widget.isPaused &&
+        initialized) {
+      // print('condition true called');
+      _controller.play();
+      rotationController.isAnimating ? null : rotationController.forward();
+    } else {
+      // print('condition true called');
+      _controller.pause();
+      rotationController.isAnimating ? rotationController.stop() : null;
+    }
     final Size deviceSize = MediaQuery.of(context).size;
     // final double topSectionh = deviceSize.height / 8;
     final double middleSectionh = deviceSize.height / 1.25;
@@ -390,22 +261,36 @@ class _VideoSlateState extends State<VideoSlate>
     // TODO: implement build
     return GestureDetector(
       onTapDown: (tap) {
-        print('tap down');
+        // print(
+        //     '1.tap down isplaying ${_controller.value.isPlaying} paused ${widget.isPaused} isrotating ${rotationController.isAnimating}  initialised $initialized');
         setState(() {
-          rotationController.isAnimating ? rotationController.stop() : null;
-          _controller.value.isPlaying ? _controller.pause() : null;
+          widget.isPaused = !widget.isPaused;
         });
+
+        //   print(
+        //       '2.tap down isplaying ${_controller.value.isPlaying} paused ${widget.isPaused} isrotating ${rotationController.isAnimating}  initialised $initialized');
       },
-      onTap: () {
+      onTapUp: (tap) {
+        // print(
+        //     '1.tap up isplaying ${_controller.value.isPlaying} paused ${widget.isPaused} isrotating ${rotationController.isAnimating}  initialised $initialized');
+
         setState(() {
-          rotationController.isAnimating && _controller.value.isPlaying
-              ? rotationController.stop()
-              : rotationController.forward();
-          _controller.value.isPlaying
-              ? _controller.pause()
-              : _controller.play();
+          widget.isPaused = !widget.isPaused;
         });
+
+        // print(
+        //     '2.tap down isplaying ${_controller.value.isPlaying} paused ${widget.isPaused} isrotating ${rotationController.isAnimating}  initialised $initialized');
       },
+      // onTap: () {
+      //   print(
+      //       'tap isplaying ${_controller.value.isPlaying} paused ${widget.isPaused}');
+      //   setState(() {
+      //     rotationController.isAnimating && _controller.value.isPlaying
+      //         ? rotationController.stop()
+      //         : rotationController.forward();
+      //     initialized = !initialized;
+      //   });
+      // },
       child: Stack(
         children: [
           Container(
@@ -416,10 +301,10 @@ class _VideoSlateState extends State<VideoSlate>
             decoration: BoxDecoration(
                 // color: Colors.amber,
                 ),
-            child: _controller.value.initialized
+            child: _controller.value != null && _controller.value.initialized
                 ? AspectRatio(
                     aspectRatio: _controller.value.aspectRatio,
-                    child: VideoPlayer(_controller),
+                    child: CachedVideoPlayer(_controller),
                   )
                 : Container(
                     child: Center(
@@ -466,4 +351,8 @@ class _VideoSlateState extends State<VideoSlate>
       ),
     );
   }
+
+  @override
+  // TODO: implement wantKeepAlive
+  bool get wantKeepAlive => false;
 }
